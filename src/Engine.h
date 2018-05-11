@@ -133,14 +133,14 @@ void draw_text(sprite_t sprite, char *text);
 int get_key(SDL_Scancode scode);
 
 void redetect_joysticks();
-int x_axis_joystick(int joyid);
-int y_axis_joystick(int joyid);
-int z_axis_joystick(int joyid);
-int x_rotate_joystick(int joyid);
-int y_rotate_joystick(int joyid);
-int z_rotate_joystick(int joyid);
-int hat_joystick(int joyid);
-int button_joystick(int joyid,int button);
+int x_axis_joystick();
+int y_axis_joystick();
+int z_axis_joystick();
+int x_rotate_joystick();
+int y_rotate_joystick();
+int z_rotate_joystick();
+int hat_joystick();
+int button_joystick(int button);
 
 //sound loading/playing
 void assign_sound(sound_t *sound, char *filename, mixtype type);

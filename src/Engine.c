@@ -30,7 +30,7 @@ static int sound_volume = 120;
 int savednum;
 int firstconnect = 0;
 
-static SDL_Joystick **joystick;
+static SDL_Joystick *joystick;
 
 //define structs
 rect_t define_rect(int rect_x, int rect_y, int rect_w, int rect_h)
@@ -95,12 +95,7 @@ void engine_init_all()
     	isrunning=1;
     }
 
-    joystick = malloc(SDL_NumJoysticks()*sizeof(SDL_Joystick**));
-
-    for (int i=0;i<SDL_NumJoysticks();i++)
-    {
-    	*(joystick+i) = SDL_JoystickOpen(i);
-    }
+    joystick = SDL_JoystickOpen(0);
 }
 
 int engine_get_running()
@@ -561,112 +556,78 @@ int get_key(SDL_Scancode scode)
 
 void redetect_joysticks()
 {
+	joystick = SDL_JoystickOpen(0);
+}
 
+int x_axis_joystick()
+{
 	if (joystick!=NULL)
 	{
-		 free(joystick);
-		 joystick = malloc(SDL_NumJoysticks()*sizeof(SDL_Joystick**));
-	}
-
-	for (int i=0;i<SDL_NumJoysticks();i++)
-	{
-		*(joystick+i) = SDL_JoystickOpen(i);
-	}
-}
-
-int x_axis_joystick(int joyid)
-{
-	if (*(joystick+joyid)!=NULL)
-	{
-		if (joyid<SDL_NumJoysticks()&&joyid>=0)
-		{
-			return (SDL_JoystickGetAxis(joystick[joyid], 0)/(32000/255));
-		}
+			return (SDL_JoystickGetAxis(joystick, 0)/(32000/255));
 	}
 	return 0;
 }
 
-int y_axis_joystick(int joyid)
+int y_axis_joystick()
 {
-	if (*(joystick+joyid)!=NULL)
+	if (joystick!=NULL)
 	{
-		if (joyid<SDL_NumJoysticks()&&joyid>=0)
-		{
-			return (SDL_JoystickGetAxis(joystick[joyid], 1)/(32000/255));
-		}
+			return (SDL_JoystickGetAxis(joystick, 1)/(32000/255));
 	}
 	return 0;
 }
 
-int z_axis_joystick(int joyid)
+int z_axis_joystick()
 {
-	if (*(joystick+joyid)!=NULL)
+	if (joystick!=NULL)
 	{
-		if (joyid<SDL_NumJoysticks()&&joyid>=0)
-		{
-			return (SDL_JoystickGetAxis(joystick[joyid], 2)/(32000/255));
-		}
+			return (SDL_JoystickGetAxis(joystick, 2)/(32000/255));
 	}
 	return 0;
 }
 
-int x_rotate_joystick(int joyid)
+int x_rotate_joystick()
 {
-	if (*(joystick+joyid)!=NULL)
+	if (joystick!=NULL)
 	{
-		if (joyid<SDL_NumJoysticks()&&joyid>=0)
-		{
-			return (SDL_JoystickGetAxis(joystick[joyid], 3)/(32000/255));
-		}
+			return (SDL_JoystickGetAxis(joystick, 3)/(32000/255));
 	}
 	return 0;
 }
 
-int y_rotate_joystick(int joyid)
+int y_rotate_joystick()
 {
-	if (*(joystick+joyid)!=NULL)
+	if (joystick!=NULL)
 	{
-		if (joyid<SDL_NumJoysticks()&&joyid>=0)
-		{
-			return (SDL_JoystickGetAxis(joystick[joyid], 4)/(32000/255));
-		}
+			return (SDL_JoystickGetAxis(joystick, 4)/(32000/255));
 	}
 	return 0;
 }
 
-int z_rotate_joystick(int joyid)
+int z_rotate_joystick()
 {
-	if (*(joystick+joyid)!=NULL)
+	if (joystick!=NULL)
 	{
-		if (joyid<SDL_NumJoysticks()&&joyid>=0)
-		{
-			return (SDL_JoystickGetAxis(joystick[joyid], 5)/(32000/255));
-		}
+			return (SDL_JoystickGetAxis(joystick, 5)/(32000/255));
 	}
 	return 0;
 }
 
-int hat_joystick(int joyid)
+int hat_joystick()
 {
-	if (*(joystick+joyid)!=NULL)
+	if (joystick!=NULL)
 	{
-		if (joyid<SDL_NumJoysticks()&&joyid>=0)
-		{
-			int temp = (int)SDL_JoystickGetHat(joystick[joyid], 0);
+			int temp = (int)SDL_JoystickGetHat(joystick, 0);
 			return temp;
-		}
 	}
 	return 0;
 }
 
-int button_joystick(int joyid, int button)
+int button_joystick(int button)
 {
-	if (*(joystick+joyid)!=NULL)
+	if (joystick!=NULL)
 	{
-		if (joyid<SDL_NumJoysticks()&&joyid>=0)
-		{
-			return SDL_JoystickGetButton(joystick[joyid], button);
-		}
+		return SDL_JoystickGetButton(joystick, button);
 	}
 	return 0;
 }
@@ -776,12 +737,7 @@ void engine_cleanup_all()
 {
 	// free EVERY STATIC VARIABLE and cleanup SDL2
 
-	for (int i=0;i<SDL_NumJoysticks();i++)
-	{
-		SDL_JoystickClose(*(joystick+i));
-		free(*(joystick+i));
-	}
-	free(joystick);
+	SDL_JoystickClose(joystick);
 	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 
 	free(name);
